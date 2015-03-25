@@ -7,9 +7,9 @@
 
 using namespace std;
 
-Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexem lexemType, vector<Rule>::iterator iterFirstRule, vector<Rule>::iterator iterLastRule, size_t maxBufferSize = -1)
+Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexem lexemType, vector<LexicalRule>::iterator iterFirstRule, vector<LexicalRule>::iterator iterLastRule, size_t maxBufferSize = -1)
 {
-    list<Rule> correspondingRules;
+    list<LexicalRule> correspondingRules;
     size_t bufferLength = 1;
 
     string correspondingRuleName;
@@ -19,7 +19,7 @@ Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexe
         string contentBuffer = contentOfSourceFile.substr(0, bufferLength);
         correspondingRules.clear();
 
-        for (vector<Rule>::iterator rule = iterFirstRule, ruleEnd = iterLastRule; rule != ruleEnd; ++rule) {
+        for (vector<LexicalRule>::iterator rule = iterFirstRule, ruleEnd = iterLastRule; rule != ruleEnd; ++rule) {
             if (rule->Match(contentBuffer)) {
                 correspondingRules.push_back(*rule);
             }
@@ -57,11 +57,11 @@ Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexe
 
 Lexem ReadTokenLiteralIntegerNumber(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("LITERAL_INT_DECIMAL", "(\\d+)(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?"));
-        rules.push_back(Rule("LITERAL_INT_HEX", "0(x|X)(\\d|a|b|c|d|e|f|A|B|C|D|E|F)+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?"));
+        rules.push_back(LexicalRule("LITERAL_INT_DECIMAL", "(\\d+)(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?"));
+        rules.push_back(LexicalRule("LITERAL_INT_HEX", "0(x|X)(\\d|a|b|c|d|e|f|A|B|C|D|E|F)+(U|u|L|l|UL|Ul|uL|ul|LU|Lu|lU|lu)?"));
     }
 
     if (!isdigit(contentOfSourceFile[0])) {
@@ -73,12 +73,12 @@ Lexem ReadTokenLiteralIntegerNumber(const string& contentOfSourceFile)
 
 Lexem ReadTokenLiteralRealNumber(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("LITERAL_REAL1", "(\\d*)\\.(\\d+)((e|E)(\\+|\\-)?(\\d+))?(F|f|D|d|M|m)?"));
-        rules.push_back(Rule("LITERAL_REAL2", "(\\d+)((e|E)(\\+|\\-)?(\\d+))(F|f|D|d|M|m)?"));
-        rules.push_back(Rule("LITERAL_REAL3", "(\\d+)(F|f|D|d|M|m)"));
+        rules.push_back(LexicalRule("LITERAL_REAL1", "(\\d*)\\.(\\d+)((e|E)(\\+|\\-)?(\\d+))?(F|f|D|d|M|m)?"));
+        rules.push_back(LexicalRule("LITERAL_REAL2", "(\\d+)((e|E)(\\+|\\-)?(\\d+))(F|f|D|d|M|m)?"));
+        rules.push_back(LexicalRule("LITERAL_REAL3", "(\\d+)(F|f|D|d|M|m)"));
     }
 
     if (!isdigit(contentOfSourceFile[0]) && contentOfSourceFile[0] != '.') {
@@ -90,11 +90,11 @@ Lexem ReadTokenLiteralRealNumber(const string& contentOfSourceFile)
 
 Lexem ReadTokenLiteralString(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("LITERAL_STRING1", "\"([^\"\n]|\\\\\"|\\\\'|\\\\\\\\|\\\\0|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v|\\\\x(\\d|a|b|c|d|e|f|A|B|C|D|E|F){1,4}|\\\\u(\\d|a|b|c|d|e|f|A|B|C|D|E|F){4}|\\\\U(\\d|a|b|c|d|e|f|A|B|C|D|E|F){8})*\""));
-        rules.push_back(Rule("LITERAL_STRING2", "@\"(\"\"|[^\"])*\""));
+        rules.push_back(LexicalRule("LITERAL_STRING1", "\"([^\"\n]|\\\\\"|\\\\'|\\\\\\\\|\\\\0|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v|\\\\x(\\d|a|b|c|d|e|f|A|B|C|D|E|F){1,4}|\\\\u(\\d|a|b|c|d|e|f|A|B|C|D|E|F){4}|\\\\U(\\d|a|b|c|d|e|f|A|B|C|D|E|F){8})*\""));
+        rules.push_back(LexicalRule("LITERAL_STRING2", "@\"(\"\"|[^\"])*\""));
     }
     
     if (contentOfSourceFile.substr(0, 1) != "\"" && contentOfSourceFile.substr(0, 2) != "@\"") {
@@ -106,10 +106,10 @@ Lexem ReadTokenLiteralString(const string& contentOfSourceFile)
 
 Lexem ReadTokenOperator(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("OPERATOR", "\\{|\\}|\\[|\\]|\\(|\\)|\\.|\\,|\\:|\\;|\\+|\\-|\\*|\\/|\\%|\\&|\\||\\^|\\!|\\~|\\=|\\<|\\>|\\?|\\+\\+|\\-\\-|\\&\\&|\\|\\||\\<\\<|\\>\\>|\\=\\=|\\!\\=|\\<\\=|\\>\\=|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\-\\>"));
+        rules.push_back(LexicalRule("OPERATOR", "\\{|\\}|\\[|\\]|\\(|\\)|\\.|\\,|\\:|\\;|\\+|\\-|\\*|\\/|\\%|\\&|\\||\\^|\\!|\\~|\\=|\\<|\\>|\\?|\\+\\+|\\-\\-|\\&\\&|\\|\\||\\<\\<|\\>\\>|\\=\\=|\\!\\=|\\<\\=|\\>\\=|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\-\\>"));
     }
 
     return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_OPERATOR, rules.begin(), rules.end(), 4);
@@ -117,11 +117,11 @@ Lexem ReadTokenOperator(const string& contentOfSourceFile)
 
 Lexem ReadTokenIdentifier(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("IDENTIFIER1", "(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*"));
-        rules.push_back(Rule("IDENTIFIER2", "@(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*"));
+        rules.push_back(LexicalRule("IDENTIFIER1", "(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*"));
+        rules.push_back(LexicalRule("IDENTIFIER2", "@(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*"));
     }
 
     if (!isalpha(contentOfSourceFile[0]) && contentOfSourceFile[0] != '@' && contentOfSourceFile[0] != '_') {
@@ -202,10 +202,10 @@ Lexem ReadComment(const string& contentOfSourceFile)
 
     // Try to read single line comment
 
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("SINGLELINE_COMMENT", "\\/\\/([^\\u000D\\u000A])*(\\u000D|\\u000A|\\u000D\\u000A)"));
+        rules.push_back(LexicalRule("SINGLELINE_COMMENT", "\\/\\/([^\\u000D\\u000A])*(\\u000D|\\u000A|\\u000D\\u000A)"));
     }
 
     if (contentOfSourceFile.substr(0, 2) != "//") {
@@ -217,11 +217,11 @@ Lexem ReadComment(const string& contentOfSourceFile)
 
 Lexem ReadDirective(const string& contentOfSourceFile)
 {
-    static vector<Rule> rules;
+    static vector<LexicalRule> rules;
 
     if (rules.empty()) {
-        rules.push_back(Rule("DIRECTIVE_DEFINE", "\\#(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)*(define)(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)+((\\@)?(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*)((\\/\\/([^\\u000D\\u000A])*)?)(\\u000D|\\u000A|\\u000D\\u000A)"));
-        rules.push_back(Rule("DIRECTIVE_UNDEFINE", "\\#(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)*(undef)(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)+((\\@)?(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*)((\\/\\/([^\\u000D\\u000A])*)?)(\\u000D|\\u000A|\\u000D\\u000A)"));
+        rules.push_back(LexicalRule("DIRECTIVE_DEFINE", "\\#(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)*(define)(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)+((\\@)?(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*)((\\/\\/([^\\u000D\\u000A])*)?)(\\u000D|\\u000A|\\u000D\\u000A)"));
+        rules.push_back(LexicalRule("DIRECTIVE_UNDEFINE", "\\#(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)*(undef)(\\u0020|\\u00A0\\u0009|\\u000B|\\u000C)+((\\@)?(_|[a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|_)*)((\\/\\/([^\\u000D\\u000A])*)?)(\\u000D|\\u000A|\\u000D\\u000A)"));
     }
 
     if (contentOfSourceFile[0] != '#') {

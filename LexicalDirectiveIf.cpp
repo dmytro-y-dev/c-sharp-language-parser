@@ -10,8 +10,8 @@ size_t ReadIfDirectiveExpression(const string& contentOfSourceFile);
 Lexem  MatchContentOverRules(
     const string& contentOfSourceFile,
     Lexem::TypeOfLexem lexemType,
-    vector<Rule>::iterator iterFirstRule,
-    vector<Rule>::iterator iterLastRule
+    vector<LexicalRule>::iterator iterFirstRule,
+    vector<LexicalRule>::iterator iterLastRule
 );
 
 size_t ReadIfDirectiveSingleLineComment(const string& contentOfSourceFile)

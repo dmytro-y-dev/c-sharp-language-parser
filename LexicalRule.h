@@ -9,14 +9,14 @@
 using std::string;
 using std::regex;
 
-class Rule
+class LexicalRule
 {
 private:
     regex m_template; //! Template that is written as regular expression. It describes the rule.
     string m_name;  //! Name of the rule
 
 public:
-    Rule(const string& name, const string& regex);
+    LexicalRule(const string& name, const string& regex);
 
     //! Check if value matches the rule.
     /*!
