@@ -8,6 +8,16 @@
 using std::vector;
 using std::pair;
 
+typedef bool(*stoppingCriteriaFunction)(const string& prefix);
+
+Lexem  MatchContentOverRules(
+    const string& contentOfSourceFile,
+    Lexem::TypeOfLexem lexemType,
+    vector<LexicalRule>::iterator iterFirstRule,
+    vector<LexicalRule>::iterator iterLastRule,
+    stoppingCriteriaFunction stoppingCriteria = nullptr
+);
+
 Lexem ReadTokenLiteralIntegerNumber(const string& contentOfSourceFile);
 Lexem ReadTokenLiteralRealNumber(const string& contentOfSourceFile);
 Lexem ReadTokenLiteralString(const string& contentOfSourceFile);

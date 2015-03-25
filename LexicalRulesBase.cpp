@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexem lexemType, vector<LexicalRule>::iterator iterFirstRule, vector<LexicalRule>::iterator iterLastRule, size_t maxBufferSize = -1)
+Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexem lexemType, vector<LexicalRule>::iterator iterFirstRule, vector<LexicalRule>::iterator iterLastRule, stoppingCriteriaFunction stoppingCriteria)
 {
     list<LexicalRule> correspondingRules;
     size_t bufferLength = 1;
@@ -36,8 +36,12 @@ Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexe
             break;
         }
 
+        if (stoppingCriteria != nullptr && stoppingCriteria(contentBuffer)) {
+            break;
+        }
+
         ++bufferLength;
-    } while (bufferLength != (contentOfSourceFile.length() + 1) && bufferLength < maxBufferSize);
+    } while (bufferLength != (contentOfSourceFile.length() + 1));
 
     if (correspondingRuleBufferLength > 0) {
         Lexem resultLexem;
@@ -71,6 +75,46 @@ Lexem ReadTokenLiteralIntegerNumber(const string& contentOfSourceFile)
     return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_LITERAL_INTEGER_NUMBER, rules.begin(), rules.end());
 }
 
+bool ReadRealNumberTokenStoppingCriteria(const string& prefix)
+{
+    size_t lastSymbolPos = prefix.length() - 1;
+
+    if (prefix[lastSymbolPos] == 'F' && prefix[lastSymbolPos] == 'f' &&
+        prefix[lastSymbolPos] == 'D' && prefix[lastSymbolPos] == 'd' &&
+        prefix[lastSymbolPos] == 'M' && prefix[lastSymbolPos] == 'm') {
+        return true;
+    }
+
+    bool expSymbolSignFound = false;
+    bool expSymbolFound = false;
+    bool pointFound = false;
+
+    bool shouldWeStop = false;
+
+    for (size_t i = 0, endi = prefix.length(); i != endi; ++i) {
+        if (!isdigit(prefix[i])) {
+            shouldWeStop = true;
+        }
+
+        if ((prefix[i] == 'E' || prefix[i] == 'e') && !expSymbolFound) {
+            shouldWeStop = false;
+            expSymbolFound = true;
+        }
+
+        if ((prefix[i] == '-' || prefix[i] == '+') && !expSymbolSignFound) {
+            shouldWeStop = false;
+            expSymbolSignFound = true;
+        }
+
+        if (prefix[i] == '.' && !pointFound) {
+            shouldWeStop = false;
+            pointFound = true;
+        }
+    }
+
+    return shouldWeStop;
+}
+
 Lexem ReadTokenLiteralRealNumber(const string& contentOfSourceFile)
 {
     static vector<LexicalRule> rules;
@@ -85,7 +129,7 @@ Lexem ReadTokenLiteralRealNumber(const string& contentOfSourceFile)
         return Lexem();
     }
 
-    return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_LITERAL_REAL_NUMBER, rules.begin(), rules.end(), 100);
+    return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_LITERAL_REAL_NUMBER, rules.begin(), rules.end(), ReadRealNumberTokenStoppingCriteria);
 }
 
 Lexem ReadTokenLiteralString(const string& contentOfSourceFile)
@@ -104,6 +148,11 @@ Lexem ReadTokenLiteralString(const string& contentOfSourceFile)
     return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_LITERAL_STRING, rules.begin(), rules.end());
 }
 
+bool ReadTokenOperatorStoppingCriteria(const string& prefix)
+{
+    return prefix.length() >= 4;
+}
+
 Lexem ReadTokenOperator(const string& contentOfSourceFile)
 {
     static vector<LexicalRule> rules;
@@ -112,7 +161,7 @@ Lexem ReadTokenOperator(const string& contentOfSourceFile)
         rules.push_back(LexicalRule("OPERATOR", "\\{|\\}|\\[|\\]|\\(|\\)|\\.|\\,|\\:|\\;|\\+|\\-|\\*|\\/|\\%|\\&|\\||\\^|\\!|\\~|\\=|\\<|\\>|\\?|\\+\\+|\\-\\-|\\&\\&|\\|\\||\\<\\<|\\>\\>|\\=\\=|\\!\\=|\\<\\=|\\>\\=|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\^\\=|\\<\\<\\=|\\>\\>\\=|\\-\\>"));
     }
 
-    return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_OPERATOR, rules.begin(), rules.end(), 4);
+    return MatchContentOverRules(contentOfSourceFile, Lexem::LEXEM_TOKEN_OPERATOR, rules.begin(), rules.end(), ReadTokenOperatorStoppingCriteria);
 }
 
 Lexem ReadTokenIdentifier(const string& contentOfSourceFile)
