@@ -6,7 +6,7 @@
 #include "LexicalAnalyzer.h"
 #include "LexicalAnalyzerException.h"
 #include "Lexem.h"
-#include "RulesBase.h"
+#include "LexicalRulesBase.h"
 
 using namespace std;
 using namespace ExcelFormat;

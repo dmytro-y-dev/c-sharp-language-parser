@@ -84,19 +84,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectiveIf.cpp" />
+    <ClCompile Include="LexicalDirectiveIf.cpp" />
     <ClCompile Include="Lexem.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Rule.cpp" />
-    <ClCompile Include="RulesBase.cpp" />
+    <ClCompile Include="LexicalRule.cpp" />
+    <ClCompile Include="LexicalRulesBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectiveIf.h" />
+    <ClInclude Include="LexicalDirectiveIf.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzerException.h" />
-    <ClInclude Include="Rule.h" />
-    <ClInclude Include="RulesBase.h" />
+    <ClInclude Include="LexicalRule.h" />
+    <ClInclude Include="LexicalRulesBase.h" />
     <ClInclude Include="Lexem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

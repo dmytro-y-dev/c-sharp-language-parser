@@ -1,8 +1,8 @@
 #include <vector>
 
-#include "RulesBase.h"
-#include "Rule.h"
-#include "DirectiveIf.h"
+#include "LexicalRulesBase.h"
+#include "LexicalRule.h"
+#include "LexicalDirectiveIf.h"
 
 using namespace std;
 

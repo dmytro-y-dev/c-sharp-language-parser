@@ -18,39 +18,39 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RulesBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Lexem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectiveIf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LexicalAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LexicalRule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LexicalRulesBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LexicalDirectiveIf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Rule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RulesBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Lexem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LexicalAnalyzerException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectiveIf.h">
+    <ClInclude Include="LexicalAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LexicalAnalyzer.h">
+    <ClInclude Include="LexicalRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LexicalRulesBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LexicalDirectiveIf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

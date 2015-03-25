@@ -1,4 +1,4 @@
-#include "Rule.h"
+#include "LexicalRule.h"
 
 using namespace std;
 

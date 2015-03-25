@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Rule.h"
+#include "LexicalRule.h"
 
 using std::vector;
 using std::pair;

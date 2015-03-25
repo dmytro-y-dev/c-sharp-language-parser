@@ -2,8 +2,8 @@
 #include <ctype.h>
 
 #include "LexicalAnalyzerException.h"
-#include "RulesBase.h"
-#include "DirectiveIf.h"
+#include "LexicalRulesBase.h"
+#include "LexicalDirectiveIf.h"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexe
             correspondingRuleBufferLength = bufferLength;
             correspondingRuleName = correspondingRules.begin()->GetName();
         } else if (correspondingRules.size() == 0 && correspondingRuleBufferLength > 0) {
-            // If no rule satisfy string and some prefix was already found then return break the cycle and return prefix
+            // If no rule satisfy string and some prefix was already found then break the cycle and return found prefix (if any)
 
             break;
         }
