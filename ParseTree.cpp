@@ -24,8 +24,12 @@ ParseTree::ParseTree()
 
 ParseTree::ParseTree(const ParseTree& tree)
 {
-    m_root = new Node(NullPosition);
-    DeepCopyNode(tree.m_root, m_root);
+    if (tree.m_root) {
+        m_root = new Node(NullPosition);
+        DeepCopyNode(tree.m_root, m_root);
+    } else {
+        m_root = nullptr;
+    }
 }
 
 ParseTree::~ParseTree()
@@ -93,15 +97,19 @@ ParseTree& ParseTree::operator=(const ParseTree& tree)
 {
     FreeNode(m_root);
 
-    m_root = new Node(NullPosition);
-    DeepCopyNode(tree.m_root, m_root);
+    if (tree.m_root) {
+        m_root = new Node(NullPosition);
+        DeepCopyNode(tree.m_root, m_root);
+    } else {
+        m_root = nullptr;
+    }
 
     return *this;
 }
 
 void ParseTree::DeepCopyNode(const Node* from, Node* where)
 {
-    if (where == nullptr || from == nullptr) {
+    if (where == nullptr) {
         return;
     }
 
