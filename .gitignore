@@ -3,3 +3,5 @@ Release
 C-Sharp\ Test\ Sources
 *.sdf
 *.opensdf
+*.psess
+*.vspx

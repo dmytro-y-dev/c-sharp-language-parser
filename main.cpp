@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "LexicalAnalyzer.h"
+#include "SyntaxAnalyzer.h"
 
 using namespace std;
 
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
     // Do lexical analysis
 
     vector<Lexem> lexems;
-    if (!GetLexemsList(originalContentOfCSharpFile, lexems)) {
+    if (!DoLexicalAnalysis(originalContentOfCSharpFile, lexems)) {
         return 1;
     }
 
@@ -57,7 +58,26 @@ int main(int argc, char** argv)
 
     // Do syntax analysis
 
-    // Write syntax analysis results to .xls file
+    vector<SyntaxRule> syntaxRules;
+    if (!LoadSyntaxRules("syntax-grammar.txt", syntaxRules) || syntaxRules.empty()) {
+        cout << "Error during loading syntax rules base" << endl;
+
+        return 2;
+    }
+
+    ParseTree syntaxTree = DoSyntaxAnalysis(tokens, syntaxRules, syntaxRules[0].GetName());
+
+    // Write syntax analysis results to text file
+
+    ofstream syntaxResultsOut("syntax-analysis-results.txt", ios_base::out);
+
+    if (syntaxTree.Empty()) {
+        syntaxResultsOut << "Error: Unable to spawn program's text." << endl << endl;
+    } else {
+        syntaxResultsOut << "File has been parsed successfully." << endl << endl;
+    }
+
+    DisplayTreeAsText(syntaxResultsOut, syntaxTree);
 
     return 0;
 }

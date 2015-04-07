@@ -90,6 +90,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="LexicalRule.cpp" />
     <ClCompile Include="LexicalRulesBase.cpp" />
+    <ClCompile Include="NonTerminalPositionType.cpp" />
+    <ClCompile Include="ParseTree.cpp" />
+    <ClCompile Include="SyntaxAnalyzer.cpp" />
+    <ClCompile Include="SyntaxRule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalDirectiveIf.h" />
@@ -98,6 +102,10 @@
     <ClInclude Include="LexicalRule.h" />
     <ClInclude Include="LexicalRulesBase.h" />
     <ClInclude Include="Lexem.h" />
+    <ClInclude Include="NonTerminalPositionType.h" />
+    <ClInclude Include="ParseTree.h" />
+    <ClInclude Include="SyntaxAnalyzer.h" />
+    <ClInclude Include="SyntaxRule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

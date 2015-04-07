@@ -140,7 +140,7 @@ void WriteLexemsToXLS(const vector<Lexem>& lexems, const char* filepath)
     xlsFile.SaveAs(filepath);
 }
 
-bool GetLexemsList(const string& originalSourceCode, vector<Lexem>& lexems)
+bool DoLexicalAnalysis(const string& originalSourceCode, vector<Lexem>& lexems)
 {
     string notYetParsedSourceCode = originalSourceCode;
     size_t offsetToNextLexem = 0;

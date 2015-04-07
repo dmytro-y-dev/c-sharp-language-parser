@@ -46,7 +46,7 @@ Lexem GetNextLexem(string& contentOfSourceFile);
 \return True if parsing was successful or false if not.
 \sa GetNextLexem()
 */
-bool GetLexemsList(const string& originalSourceCode, vector<Lexem>& lexems);
+bool DoLexicalAnalysis(const string& originalSourceCode, vector<Lexem>& lexems);
 
 //! Select only significant lexems (just tokens) from the list of lexems.
 /*!
