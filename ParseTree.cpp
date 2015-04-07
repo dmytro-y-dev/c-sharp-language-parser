@@ -101,7 +101,7 @@ ParseTree& ParseTree::operator=(const ParseTree& tree)
 
 void ParseTree::DeepCopyNode(const Node* from, Node* where)
 {
-    if (where == nullptr) {
+    if (where == nullptr || from == nullptr) {
         return;
     }
 

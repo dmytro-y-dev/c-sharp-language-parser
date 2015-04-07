@@ -149,10 +149,10 @@ ParseTree DoSyntaxAnalysis(const vector<Lexem>& tokens, const vector<SyntaxRule>
                             !P[NonTerminalPositionType(i - k - 1, j + k + 1, rules[l].GetSecondPartOfRule())].empty()) {
 
                             if (!P[NonTerminalPositionType(i, j, rules[l].GetName())].empty()) {
-                                if (P[NonTerminalPositionType(i, j, rules[l].GetName())][0] == NonTerminalPositionType(k, j, rules[l].GetFirstPartOfRule())) {
+                                if (P[NonTerminalPositionType(i, j, rules[l].GetName())][0].name == rules[l].GetFirstPartOfRule()) {
                                     // Just skip and don't add same children non-terminals again
                                 } else {
-                                    throw SyntaxError("Error: Ambiguous grammar");
+                                    throw SyntaxError("Error: Ambiguous grammar - rules " + P[NonTerminalPositionType(i, j, rules[l].GetName())][0].name + " and " + rules[l].GetFirstPartOfRule());
                                 }
                             } else {
                                 P[NonTerminalPositionType(i, j, rules[l].GetName())].push_back(NonTerminalPositionType(k, j, rules[l].GetFirstPartOfRule()));
