@@ -25,18 +25,18 @@ Lexem MatchContentOverRules(const string& contentOfSourceFile, Lexem::TypeOfLexe
             }
         }
 
+        if (stoppingCriteria != nullptr && stoppingCriteria(contentBuffer)) {
+            break;
+        }
+        
         if (correspondingRules.size() == 1) {
             // Save information about current longest prefix available which can be spawned by exactly 1 rule
 
             correspondingRuleBufferLength = bufferLength;
             correspondingRuleName = correspondingRules.begin()->GetName();
-        } else if (correspondingRules.size() == 0 && correspondingRuleBufferLength > 0) {
+        } else if (stoppingCriteria == nullptr && correspondingRules.size() == 0 && correspondingRuleBufferLength > 0) {
             // If no rule satisfy string and some prefix was already found then break the cycle and return found prefix (if any)
 
-            break;
-        }
-
-        if (stoppingCriteria != nullptr && stoppingCriteria(contentBuffer)) {
             break;
         }
 
