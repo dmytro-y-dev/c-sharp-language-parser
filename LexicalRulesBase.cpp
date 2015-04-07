@@ -207,7 +207,7 @@ Lexem ReadLineEnding(const string& contentOfSourceFile)
     if (contentOfSourceFile.substr(0, 2) == "\x0D\x0A") {
         lineEndingLexem.value = contentOfSourceFile.substr(0, 2);
     } else if (contentOfSourceFile.substr(0, 1) == "\x0D" ||
-        contentOfSourceFile.substr(0, 1) == "\x0D") {
+        contentOfSourceFile.substr(0, 1) == "\x0A") {
         lineEndingLexem.value = contentOfSourceFile.substr(0, 1);
     } else {
         return Lexem();
