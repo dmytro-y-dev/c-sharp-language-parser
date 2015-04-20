@@ -1,6 +1,5 @@
-Debug
-Release
-C-Sharp\ Test\ Sources
+Debug*
+Release*
 *.sdf
 *.opensdf
 *.psess

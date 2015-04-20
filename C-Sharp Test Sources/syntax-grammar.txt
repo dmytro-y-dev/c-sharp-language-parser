@@ -1,0 +1,153 @@
+<compilation-unit> ::= <class-keyword> <class-part1>
+<class-part1> ::= <identifier> <class-part2>
+<class-part1> ::= <identifier> <class-body>
+<class-part2> ::= <class-body> <one-more-class>
+<one-more-class> ::= <class-keyword> <class-part1>
+
+<class-body> ::= <opening-bracket> <class-body-part1>
+<class-body-part1> ::= <class-member-declaration> <closing-bracket>
+<class-body-part1> ::= <class-member-declaration> <class-body-part1>
+<class-member-declaration> ::= <method-header> <maybe-empty-block>
+
+<method-header> ::= <method-modifier> <method-header-part1>
+<method-header-part1> ::= <type> <method-header-part2>
+<method-header-part1> ::= <void> <method-header-part2>
+<method-header-part2> ::= <identifier> <method-header-part3>
+<method-header-part3> ::= <opening-parentheses> <method-header-part4a>
+<method-header-part3> ::= <opening-parentheses> <method-header-part4b>
+<method-header-part3> ::= <opening-parentheses> <closing-parentheses>
+<method-header-part4a> ::= <formal-parameter-list> <closing-parentheses>
+<method-header-part4b> ::= <fixed-parameter> <closing-parentheses>
+
+<formal-parameter-list> ::= <fixed-parameter> <formal-parameter-list-part1>
+<formal-parameter-list-part1> ::= <comma> <formal-parameter-list>
+<formal-parameter-list-part1> ::= <comma> <fixed-parameter>
+<fixed-parameter> ::= <type> <identifier>
+
+<maybe-empty-block> ::= ";"
+<maybe-empty-block> ::= <opening-bracket> <closing-bracket>
+<maybe-empty-block> ::= <opening-bracket> <maybe-empty-block-part1>
+<maybe-empty-block-part1> ::= <declaration-statement> <closing-bracket>
+<maybe-empty-block-part1> ::= <declaration-statement> <maybe-empty-block-part1>
+<maybe-empty-block-part1> ::= <embedded-statement> <closing-bracket>
+<maybe-empty-block-part1> ::= <embedded-statement> <maybe-empty-block-part1>
+
+<declaration-statement> ::= <local-variable-declaration> <semicolon>
+<declaration-statement> ::= <statement-expression> <semicolon>
+
+<local-variable-declaration> ::= <type> <local-variable-declaration-part1>
+<local-variable-declaration> ::= <type> <identifier>
+<local-variable-declaration> ::= <type> <variable-declarator-with-initialization>
+<local-variable-declaration-part1> ::= <identifier> <local-variable-declaration-part2>
+<local-variable-declaration-part1> ::= <variable-declarator-with-initialization> <local-variable-declaration-part2>
+<local-variable-declaration-part2> ::= <comma> <local-variable-declaration-part1>
+
+<variable-declarator-with-initialization> ::= <identifier> <variable-declarator-with-initialization-part1>
+<variable-declarator-with-initialization-part1> ::= <equality> <expression>
+
+<embedded-statement> ::= ";"
+<embedded-statement> ::= <opening-bracket> <maybe-empty-block-part1>
+
+<embedded-statement> ::= <while-keyword> <embedded-statement-part1>
+<embedded-statement-part1> ::= <opening-parentheses> <embedded-statement-part2>
+<embedded-statement-part2> ::= <expression> <embedded-statement-part3>
+<embedded-statement-part3> ::= <closing-parentheses> <maybe-empty-block>
+
+<statement-expression> ::= <identifier> <statement-expression-partA1>
+<statement-expression-partA1> ::= <opening-parentheses> <closing-parentheses>
+<statement-expression-partA1> ::= <opening-parentheses> <statement-expression-partA2>
+<statement-expression-partA2> ::= <expression> <closing-parentheses>
+<statement-expression-partA2> ::= <expression> <statement-expression-partA3>
+<statement-expression-partA2> ::= <expression> <closing-parentheses>
+<statement-expression-partA2> ::= <expression> <statement-expression-partA3>
+<statement-expression-partA3> ::= <comma> <statement-expression-partA2>
+
+<statement-expression> ::= <identifier> <statement-expression-partB>
+<statement-expression-partB> ::= <assignment-operator> <expression>
+
+<statement-expression> ::= <identifier> <increment-decrement>
+<statement-expression> ::= <increment-decrement> <identifier>
+
+<expression> ::= identifier
+<expression> ::= literal
+<expression> ::= <expression> <expression-operator>
+<expression-operator> ::= <logical-operator> <expression>
+<expression-operator> ::= <expression-equality-operator> <expression>
+<expression-operator> ::= <expression-relational-operator> <expression>
+<expression-operator> ::= <arithmetical-operator> <expression>
+
+<expression> ::= <non-qualified-identifier> <expression-qualified-id>
+<expression-qualified-id> ::= <dot> <expression-qualified-id>
+<expression-qualified-id> ::= <dot> <non-qualified-identifier>
+
+<identifier> ::= identifier
+<identifier> ::= <non-qualified-identifier> <identifier-qualificator>
+<identifier-qualificator> ::= <dot> <identifier>
+
+<increment-decrement> ::= "++"
+<increment-decrement> ::= "--"
+
+<equality> ::= "="
+
+<comma> ::= ","
+<semicolon> ::=  ";"
+
+<opening-bracket> ::= "{"
+<closing-bracket> ::= "}"
+
+<opening-parentheses> ::= "("
+<closing-parentheses> ::= ")"
+
+<method-modifier> ::= "public"
+<method-modifier> ::= "protected"
+<method-modifier> ::= "private"
+<method-modifier> ::= "static"
+
+<void> ::= "void"
+
+<type> ::= "sbyte"
+<type> ::= "byte"
+<type> ::= "short"
+<type> ::= "ushort"
+<type> ::= "int"
+<type> ::= "uint"
+<type> ::= "long"
+<type> ::= "ulong"
+<type> ::= "string"
+<type> ::= "bool"
+<type> ::= "float"
+<type> ::= "double"
+
+<arithmetical-operator> ::= "+"
+<arithmetical-operator> ::= "-"
+<arithmetical-operator> ::= "*"
+<arithmetical-operator> ::= "/"
+<arithmetical-operator> ::= "%"
+
+<logical-operator> ::= "||"
+<logical-operator> ::= "&&"
+
+<expression-equality-operator> ::= "=="
+<expression-equality-operator> ::= "!="    
+<expression-relational-operator> ::= ">"
+<expression-relational-operator> ::= "<"
+<expression-relational-operator> ::= "<="
+<expression-relational-operator> ::= ">="
+
+<class-keyword> ::= "class"
+<while-keyword> ::= "while"
+<non-qualified-identifier> ::= identifier
+
+<assignment-operator> ::= "="
+<assignment-operator> ::= "+="
+<assignment-operator> ::= "-="
+<assignment-operator> ::= "*="
+<assignment-operator> ::= "/="
+<assignment-operator> ::= "%="
+<assignment-operator> ::= "&="
+<assignment-operator> ::= "|="
+<assignment-operator> ::= "^="
+<assignment-operator> ::= "<<="
+<assignment-operator> ::= ">>="
+
+<dot> ::= "."

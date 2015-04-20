@@ -16,6 +16,9 @@
     <Filter Include="Contrib">
       <UniqueIdentifier>{66c40610-6083-4fa3-862e-c8363959014e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SyntaxAnayzerGUI">
+      <UniqueIdentifier>{d27c5397-5e83-4a1c-9281-cf7ea68b29fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="NonTerminalPositionType.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SyntaxAnalyzerGUI\Application.cpp">
+      <Filter>SyntaxAnayzerGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
