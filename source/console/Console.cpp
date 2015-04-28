@@ -1,33 +1,12 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <vector>
 
 #include "LexicalAnalyzer.h"
 #include "SyntaxAnalyzer.h"
+#include "FileSystemOperations.h"
 
 using namespace std;
-
-string LoadFileContentFromDiskToMemory(const char* filepath)
-{
-    ifstream in(filepath, ios_base::in | ios_base::binary | ios_base::ate);
-
-    if (!in.good()) {
-        return nullptr;
-    }
-
-    unsigned long fileLength = static_cast<unsigned long>(in.tellg());
-    in.seekg(0);
-
-    char* content = new char[fileLength + 1];
-    in.read(content, fileLength);
-    content[fileLength] = '\0';
-
-    string result = content;
-    delete[] content;
-
-    return result;
-}
 
 int main(int argc, char** argv)
 {
@@ -59,7 +38,7 @@ int main(int argc, char** argv)
     // Do syntax analysis
 
     vector<SyntaxRule> syntaxRules;
-    if (!LoadSyntaxRules("syntax-grammar.txt", syntaxRules) || syntaxRules.empty()) {
+    if (!LoadSyntaxRules("../grammars/syntax-grammar.txt", syntaxRules) || syntaxRules.empty()) {
         cout << "Error during loading syntax rules base" << endl;
 
         return 2;

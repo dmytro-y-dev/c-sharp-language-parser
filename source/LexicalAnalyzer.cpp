@@ -1,7 +1,7 @@
 #include <sstream>
 #include <iostream>
 
-#include <ExcelFormat.h>
+#include <ExcelFormat/ExcelFormat.h>
 
 #include "LexicalAnalyzer.h"
 #include "LexicalAnalyzerException.h"
