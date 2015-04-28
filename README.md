@@ -6,7 +6,7 @@ C# Language Parser
 This is `C# language parser`. It is planned to improve it by implementation of semantics analysis.
 
 **Lexical analysis:** Tokens reading is implemented by use of regular expressions. Directive "#if" is implemented using grammar (which is quite slow so I will
-change such a way of things later).
+change such a way of things in future).
 
 **Syntax analysis:** Application uses CYK algorithm to build parse tree. For more information see <http://web.cs.ucdavis.edu/~rogaway/classes/120/winter12/CYK.pdf>.
 
@@ -20,7 +20,7 @@ You can use CMake (<http://www.cmake.org/>) to build this project. The steps are
 1. Open command line and change current directory with `$ cd` command to the directory where you unpacked the project's source code.
 2. Run `$ cmake -H. -Bbuild -G "Visual Studio 12"` to create Makefile for Visual Studio 2013 (or use other generator if you use other IDE). Don't forget to specify path to dependency libraries and headers with -D parameter.
 3. Open `build/C-Sharp-Parser.sln` and build solution in Visual Studio.
-4. Optionally, you can install library by building project which name is `INSTALL` in Visual Studio. Remember that you must have enough rights on your system to let VS copy files to installation folder.
+4. Optionally, you can install this utility by building project which name is `INSTALL` in Visual Studio. Remember that you must have enough rights on your system to let VS copy files to installation folder.
 
 <!--- Not yet
 Another option is to use bii (<http://www.biicode.com>). Building commands are next:
