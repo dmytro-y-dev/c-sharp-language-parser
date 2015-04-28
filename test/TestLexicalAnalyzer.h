@@ -12,16 +12,15 @@ public:
     void testLexicalAnalysisParsingResults(void)
     {
         vector<Lexem> lexems;
-        string fixtureTwoSmallClasses = LoadFileContentFromDiskToMemory("../test/fixture/FixtureTwoSmallClasses.cs");
+        string fixtureTwoSmallClasses = LoadFileContentFromDiskToMemory("../test/fixtures/FixtureTwoSmallClasses.cs");
         
         TS_ASSERT(!fixtureTwoSmallClasses.empty());
         TS_ASSERT(DoLexicalAnalysis(fixtureTwoSmallClasses, lexems));
         
-        WriteLexemsToXLS(lexems, "lexems.xls");
+        // WriteLexemsToXLS(lexems, "lexems.xls");
         
         // TODO:
-        // WriteLexemsToXLS(lexems, "lexems.xls");
-        // Compare two .xls files
+        // Compare values with FixtureTwoSmallClasses-ExpectedResult.xls
     }
 };
 

@@ -10,7 +10,7 @@ change such a way of things in future).
 
 **Syntax analysis:** Application uses CYK algorithm to build parse tree. For more information see <http://web.cs.ucdavis.edu/~rogaway/classes/120/winter12/CYK.pdf>.
 
-Project goes under GPL v3 license. Use it for educational purpose for free.
+Project goes under GPL v3 license. Use it for educational purpose freely.
 
 How to build
 ------------

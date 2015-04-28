@@ -9,7 +9,7 @@ if (CXXTEST_FOUND)
     
     enable_testing()
     
-    add_library(LexicalAnalyzerLib STATIC
+    add_library(LexicalAnalyzerDependencies STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/source/LexicalAnalyzer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/source/FileSystemOperations.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/source/LexicalRule.cpp
@@ -20,10 +20,10 @@ if (CXXTEST_FOUND)
     
     find_package(ExcelFormat REQUIRED)
     include_directories(${EXCELFORMAT_INCLUDE_DIRS})
-    target_link_libraries(LexicalAnalyzerLib ${EXCELFORMAT_LIBRARIES})
+    target_link_libraries(LexicalAnalyzerDependencies ${EXCELFORMAT_LIBRARIES})
     
     CXXTEST_ADD_TEST(TestLexicalAnalyzer TestLexicalAnalyzer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/test/TestLexicalAnalyzer.h)
-    target_link_libraries(TestLexicalAnalyzer LexicalAnalyzerLib)
+    target_link_libraries(TestLexicalAnalyzer LexicalAnalyzerDependencies)
 else()
     message(SEND_ERROR "You must have CxxTest on your system to test source code" )
 endif()
