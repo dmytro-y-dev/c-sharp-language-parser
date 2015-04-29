@@ -30,6 +30,15 @@ Another option is to use bii (<http://www.biicode.com>). Building commands are n
 4. Run `$ bii cpp:configure`. You can specify your CMake generator with `-G` flag like `$ bii cpp:configure -G "Visual Studio 12"`.
 5. Run `$ bii cpp:build` to build the project.
 
+Dependencies
+------------
+
+Dependencies are automatically integrated into project when you use bii as build tool. If you prefer CMake you must compile dependencies and specify paths to them. The libraries are next:
+
+- ExcelFormat: <http://www.biicode.com/metamaker/ExcelFormat>
+- wxWidgets: <https://www.biicode.com/fenix/wxwidgets>
+- cxxtest: <https://www.biicode.com/DevOmem/cxxtest>
+
 License agreement
 -----------------
 
