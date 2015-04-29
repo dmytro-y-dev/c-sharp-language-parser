@@ -1,5 +1,6 @@
 IF(BIICODE)
-	ADD_BII_TARGETS()
+    include("cmake/Bii.cmake")
+    
 	return()
 endif()
 

@@ -22,7 +22,6 @@ You can use CMake (<http://www.cmake.org/>) to build this project. The steps are
 3. Open `build/C-Sharp-Parser.sln` and build solution in Visual Studio.
 4. Optionally, you can install this utility by building project which name is `INSTALL` in Visual Studio. Remember that you must have enough rights on your system to let VS copy files to installation folder.
 
-<!--- Not yet
 Another option is to use bii (<http://www.biicode.com>). Building commands are next:
 
 1. `$ cd` to the project's folder.
@@ -30,7 +29,6 @@ Another option is to use bii (<http://www.biicode.com>). Building commands are n
 3. Run `$ bii find`.
 4. Run `$ bii cpp:configure`. You can specify your CMake generator with `-G` flag like `$ bii cpp:configure -G "Visual Studio 12"`.
 5. Run `$ bii cpp:build` to build the project.
--->
 
 License agreement
 -----------------
@@ -49,6 +47,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 Release history
 ---------------
+
+29.04.2015 - Version 0.2
+- Biicode support
 
 28.04.2015 - Version 0.1
 - First release
