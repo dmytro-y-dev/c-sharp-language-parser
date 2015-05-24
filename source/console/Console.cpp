@@ -5,6 +5,7 @@
 #include "LexicalAnalyzer.h"
 #include "SyntaxAnalyzer.h"
 #include "FileSystemOperations.h"
+#include "SymbolsTable.h"
 
 using namespace std;
 
@@ -57,6 +58,14 @@ int main(int argc, char** argv)
     }
 
     DisplayTreeAsText(syntaxResultsOut, syntaxTree);
+
+    try {
+        SymbolsTable symbolsTable;
+        GenerateSymbolsTable(syntaxTree, tokens, symbolsTable);
+        WriteSymbolsTableToXLS(symbolsTable, "symbols.xls");
+    } catch (SymbolsTableGenerationError& error) {
+        cout << error << endl;
+    }
 
     return 0;
 }

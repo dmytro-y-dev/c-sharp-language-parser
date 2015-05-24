@@ -35,12 +35,8 @@
 <declaration-statement> ::= <local-variable-declaration> <semicolon>
 <declaration-statement> ::= <statement-expression> <semicolon>
 
-<local-variable-declaration> ::= <type> <local-variable-declaration-part1>
 <local-variable-declaration> ::= <type> <identifier>
 <local-variable-declaration> ::= <type> <variable-declarator-with-initialization>
-<local-variable-declaration-part1> ::= <identifier> <local-variable-declaration-part2>
-<local-variable-declaration-part1> ::= <variable-declarator-with-initialization> <local-variable-declaration-part2>
-<local-variable-declaration-part2> ::= <comma> <local-variable-declaration-part1>
 
 <variable-declarator-with-initialization> ::= <identifier> <variable-declarator-with-initialization-part1>
 <variable-declarator-with-initialization-part1> ::= <equality> <expression>
