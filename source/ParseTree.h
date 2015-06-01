@@ -64,6 +64,6 @@ private:
     void DeepCopyNode(const Node* from, Node* where);
 };
 
-void DisplayTreeAsText(ostream& out, const ParseTree& tree);
+void DisplaySyntaxParseTreeAsText(ostream& out, const ParseTree& tree);
 
 #endif // C_SHARP_PARSE_TREE_H

@@ -33,11 +33,13 @@
 using std::vector;
 using std::string;
 
-typedef vector<SymbolClass> SymbolsTable;
+typedef map<string, SymbolClass> SymbolsTable;
 
 void GenerateSymbolsTable(const ParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable);
 
 void WriteSymbolsTableToXLS(const SymbolsTable& symbolsTable, const char* filepath);
+
+SymbolVariable* GetVariableByName(const string& name, VariablesBlock* startingBlock, int currentPositionInCode);
 
 typedef std::string SymbolsTableGenerationError;
 

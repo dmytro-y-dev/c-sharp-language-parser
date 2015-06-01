@@ -10,8 +10,8 @@ using namespace ExcelFormat;
 
 struct PositionInSymbolsTable
 {
-    int classIndex;
-    string functionName;
+    string className;
+    string methodName;
 
     VariablesBlock* currentBlock;
 };
@@ -26,7 +26,7 @@ SymbolVariable* GetVariableByName(const string& name, VariablesBlock* startingBl
 
     if (ptrToVariable != startingBlock->variables.end()
             && ptrToVariable->second.variableVisibilityStart <= currentPositionInCode
-            && ptrToVariable->second.variableVisibilityEnd >= currentPositionInCode) {
+            && startingBlock->closingBracketPosition >= currentPositionInCode) {
         return &(ptrToVariable->second);
     }
 
@@ -36,24 +36,24 @@ SymbolVariable* GetVariableByName(const string& name, VariablesBlock* startingBl
 bool TryClassNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (syntaxTreeNode->value.name == "<class-part1>") {
-        newSymbolPosition.classIndex = symbolsTable.size();
-
         SymbolClass newSymbol;
         newSymbol.name = tokens[syntaxTreeNode->left->value.j].value;
 
         for (auto classSymbol : symbolsTable)  {
-            if (classSymbol.name == newSymbol.name) {
+            if (classSymbol.first == newSymbol.name) {
                 throw SymbolsTableGenerationError("Error: Class name `" + newSymbol.name + "` is used twice in current unit");
             }
         }
 
-        symbolsTable.push_back(newSymbol);
+        symbolsTable.insert(make_pair(newSymbol.name, newSymbol));
+
+        newSymbolPosition.className = newSymbol.name;
 
         return true;
     }
 
     if (syntaxTreeNode->value.name == "<one-more-class>") {
-        newSymbolPosition.classIndex = -1;
+        newSymbolPosition.className = "";
     }
 
     return false;
@@ -75,12 +75,12 @@ bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
         return false;
     }
 
-    if (newSymbolPosition.classIndex == -1 || newSymbolPosition.functionName.empty()) {
+    if (newSymbolPosition.className == "" || newSymbolPosition.methodName.empty()) {
         throw SymbolsTableGenerationError("Unexpected situation: Block outside of class");
     }
 
     int closingBracketPosition = syntaxTreeNode->value.i + syntaxTreeNode->value.j;
-    SymbolFunction& currentFunction = symbolsTable[newSymbolPosition.classIndex].functions[newSymbolPosition.functionName];
+    SymbolFunction& currentFunction = symbolsTable[newSymbolPosition.className].functions[newSymbolPosition.methodName];
 
     if (newSymbolPosition.currentBlock == nullptr) {
         VariablesBlock newBlock;
@@ -100,6 +100,7 @@ bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
         newSymbolPosition.currentBlock = &newSymbolPosition.currentBlock->childrenBlocks[newSymbolPosition.currentBlock->childrenBlocks.size() - 1];
     }
 
+    newSymbolPosition.currentBlock->openingBracketPosition = syntaxTreeNode->value.j;
     newSymbolPosition.currentBlock->closingBracketPosition = closingBracketPosition;
 
     return true;
@@ -111,7 +112,7 @@ bool TryVariablesNonterminals(const ParseTree::Node* syntaxTreeNode, const vecto
         return false;
     }
 
-    if (newSymbolPosition.classIndex == -1 || newSymbolPosition.functionName.empty() || newSymbolPosition.currentBlock == nullptr) {
+    if (newSymbolPosition.className == "" || newSymbolPosition.methodName.empty() || newSymbolPosition.currentBlock == nullptr) {
         throw SymbolsTableGenerationError("Unexpected situation: Variable defined outside of class");
     }
 
@@ -120,8 +121,7 @@ bool TryVariablesNonterminals(const ParseTree::Node* syntaxTreeNode, const vecto
     newVariable.tokenValueEnd = syntaxTreeNode->value.j + syntaxTreeNode->value.i + 1;
     newVariable.type = tokens[syntaxTreeNode->left->value.j].value;
     newVariable.name = tokens[syntaxTreeNode->left->value.j + 1].value;
-    newVariable.variableVisibilityStart = newVariable.tokenValueEnd + 1;
-    newVariable.variableVisibilityEnd = newSymbolPosition.currentBlock->closingBracketPosition;
+    newVariable.variableVisibilityStart = syntaxTreeNode->value.j;
 
     if (newVariable.tokenValueStart < newVariable.tokenValueEnd) {
         newVariable.tokenValueStart += 1; // Exclude = from sequence
@@ -239,17 +239,19 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
     newFunction.name = tokens[methodName->value.j].value;
     newFunction.returnType = tokens[methodReturnType->value.j].value;
 
-    if (newSymbolPosition.classIndex == -1) {
+    if (newSymbolPosition.className == "") {
         throw SymbolsTableGenerationError("Unexpected situation: Method outside of class");
     }
-    newSymbolPosition.functionName = newFunction.name;
+    newSymbolPosition.methodName = newFunction.name;
 
-    if (symbolsTable[newSymbolPosition.classIndex].functions.find(newFunction.name) != symbolsTable[newSymbolPosition.classIndex].functions.end()) {
-        throw SymbolsTableGenerationError("Error: Method name `" + newFunction.name + "` is used twice in `" + symbolsTable[newSymbolPosition.classIndex].name + "` class declaration");
+    if (symbolsTable[newSymbolPosition.className].functions.find(newFunction.name) != symbolsTable[newSymbolPosition.className].functions.end()) {
+        throw SymbolsTableGenerationError("Error: Method name `" + newFunction.name + "` is used twice in `" + symbolsTable[newSymbolPosition.className].name + "` class declaration");
     }
 
     VariablesBlock newBlock;
     newBlock.parentBlock = nullptr;
+    newBlock.openingBracketPosition = 0;
+    newBlock.closingBracketPosition = tokens.size();
     
     if (formalParametersStart->value.i > 1) {
         for (int curLexem = formalParametersStart->value.j, lastLexem = formalParametersStart->value.j + formalParametersStart->value.i; curLexem < lastLexem; curLexem += 3) {
@@ -273,7 +275,6 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
             newVariable.type = parameter.type;
             newVariable.name = parameter.name;
             newVariable.variableVisibilityStart = 0;
-            newVariable.variableVisibilityEnd = tokens.size();
 
             newBlock.variables.insert(make_pair(newVariable.name, newVariable));
         }
@@ -281,8 +282,8 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
 
     newFunction.blocks.push_back(newBlock);
 
-    symbolsTable[newSymbolPosition.classIndex].functions.insert(make_pair(newFunction.name, newFunction));
-    newSymbolPosition.currentBlock = &symbolsTable[newSymbolPosition.classIndex].functions[newFunction.name].blocks[0];
+    symbolsTable[newSymbolPosition.className].functions.insert(make_pair(newFunction.name, newFunction));
+    newSymbolPosition.currentBlock = &symbolsTable[newSymbolPosition.className].functions[newFunction.name].blocks[0];
 
     return true;
 }
@@ -316,9 +317,9 @@ void TraverseThroughSyntaxTreeAndAddSymbols(const ParseTree::Node* syntaxTreeNod
 void GenerateSymbolsTable(const ParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable)
 {
     PositionInSymbolsTable firstSymbolPosition;
-    firstSymbolPosition.classIndex    = -1;
-    firstSymbolPosition.functionName  = "";
-    firstSymbolPosition.currentBlock  = nullptr;
+    firstSymbolPosition.className = "";
+    firstSymbolPosition.methodName = "";
+    firstSymbolPosition.currentBlock = nullptr;
 
     TraverseThroughSyntaxTreeAndAddSymbols(syntaxTree.GetRoot(), tokens, firstSymbolPosition, symbolsTable);
 }
@@ -357,10 +358,10 @@ void WriteSymbolsTableToXLS(const SymbolsTable& symbolsTable, const char* filepa
 
     int row = 1;
 
-    for (vector<SymbolClass>::const_iterator curClass = symbolsTable.begin(), lastClass = symbolsTable.end(); curClass != lastClass; ++curClass) {
-        worksheet->Cell(row, 0)->Set(curClass->name.c_str());
+    for (map<string, SymbolClass>::const_iterator curClass = symbolsTable.begin(), lastClass = symbolsTable.end(); curClass != lastClass; ++curClass) {
+        worksheet->Cell(row, 0)->Set(curClass->second.name.c_str());
 
-        if (curClass->functions.empty()) {
+        if (curClass->second.functions.empty()) {
             row += 2;
 
             continue;
@@ -374,7 +375,7 @@ void WriteSymbolsTableToXLS(const SymbolsTable& symbolsTable, const char* filepa
 
         row += 3;
 
-        for (auto curFunction : curClass->functions) {
+        for (auto curFunction : curClass->second.functions) {
             worksheet->Cell(row, 1)->Set(curFunction.second.modifier.c_str());
             worksheet->Cell(row, 2)->Set(curFunction.second.returnType.c_str());
             worksheet->Cell(row, 3)->Set(curFunction.second.name.c_str());

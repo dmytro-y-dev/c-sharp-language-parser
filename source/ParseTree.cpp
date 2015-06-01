@@ -1,6 +1,6 @@
 #include "ParseTree.h"
 
-void DisplayNodeAsText(ostream& out, const ParseTree::Node* node, const string& prefix)
+void DisplaySyntaxParseTreeNodeAsText(ostream& out, const ParseTree::Node* node, const string& prefix)
 {
     if (node == nullptr) {
         return;
@@ -8,13 +8,13 @@ void DisplayNodeAsText(ostream& out, const ParseTree::Node* node, const string& 
 
     out << prefix << node->value.name << "(" << node->value.i << ";" << node->value.j << ")" << std::endl;
 
-    DisplayNodeAsText(out, node->left, prefix + "    L!");
-    DisplayNodeAsText(out, node->right, prefix + "    R!");
+    DisplaySyntaxParseTreeNodeAsText(out, node->left, prefix + "    L!");
+    DisplaySyntaxParseTreeNodeAsText(out, node->right, prefix + "    R!");
 }
 
-void DisplayTreeAsText(ostream& out, const ParseTree& tree)
+void DisplaySyntaxParseTreeAsText(ostream& out, const ParseTree& tree)
 {
-    DisplayNodeAsText(out, tree.GetRoot(), "");
+    DisplaySyntaxParseTreeNodeAsText(out, tree.GetRoot(), "");
 }
 
 ParseTree::ParseTree()

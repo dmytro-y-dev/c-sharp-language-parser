@@ -40,7 +40,8 @@ struct SymbolVariable
     int tokenValueStart;
     int tokenValueEnd;
     int variableVisibilityStart;
-    int variableVisibilityEnd;
+
+    int triadId;
 
     string value;
 };
@@ -57,7 +58,8 @@ struct VariablesBlock
 
     vector<VariablesBlock> childrenBlocks;
     VariablesBlock* parentBlock;
-    
+
+    int openingBracketPosition;
     int closingBracketPosition;
 };
 
