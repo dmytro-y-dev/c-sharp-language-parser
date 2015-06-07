@@ -31,7 +31,7 @@
 using std::string;
 using std::ostream;
 
-class ParseTree
+class SyntaxParseTree
 {
 public:
     struct Node {
@@ -46,9 +46,9 @@ private:
     Node* m_root;
 
 public:
-    ParseTree();
-    ParseTree(const ParseTree& tree);
-    ~ParseTree();
+    SyntaxParseTree();
+    SyntaxParseTree(const SyntaxParseTree& tree);
+    ~SyntaxParseTree();
 
     Node* GetRoot();
     const Node* GetRoot() const;
@@ -56,7 +56,7 @@ public:
     Node* InsertChildNode(Node* parentNode, const NonTerminalPositionType& value);
     bool Empty() const;
 
-    ParseTree& operator=(const ParseTree& tree);
+    SyntaxParseTree& operator=(const SyntaxParseTree& tree);
 
 private:
     void FreeNode(Node* node);
@@ -64,6 +64,6 @@ private:
     void DeepCopyNode(const Node* from, Node* where);
 };
 
-void DisplaySyntaxParseTreeAsText(ostream& out, const ParseTree& tree);
+void DisplaySyntaxParseTreeAsText(ostream& out, const SyntaxParseTree& tree);
 
 #endif // C_SHARP_PARSE_TREE_H

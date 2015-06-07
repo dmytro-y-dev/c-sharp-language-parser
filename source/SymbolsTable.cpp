@@ -13,27 +13,52 @@ struct PositionInSymbolsTable
     string className;
     string methodName;
 
-    VariablesBlock* currentBlock;
+    CodeBlock* currentBlock;
 };
 
-SymbolVariable* GetVariableByName(const string& name, VariablesBlock* startingBlock, int currentPositionInCode)
+SymbolVariable* FindVariable(const string& variableName, CodeBlock* bestCorrespondingBlock, int currentPositionInCode)
 {
-    if (!startingBlock) {
+    if (!bestCorrespondingBlock) {
         return nullptr;
     }
 
-    map<string, SymbolVariable>::iterator ptrToVariable = startingBlock->variables.find(name);
+    map<string, SymbolVariable>::iterator ptrToVariable = bestCorrespondingBlock->variables.find(variableName);
 
-    if (ptrToVariable != startingBlock->variables.end()
+    if (ptrToVariable != bestCorrespondingBlock->variables.end()
             && ptrToVariable->second.variableVisibilityStart <= currentPositionInCode
-            && startingBlock->closingBracketPosition >= currentPositionInCode) {
+            && bestCorrespondingBlock->closingBracketPosition >= currentPositionInCode) {
         return &(ptrToVariable->second);
     }
 
-    return GetVariableByName(name, startingBlock->parentBlock, currentPositionInCode);
+    return FindVariable(variableName, bestCorrespondingBlock->parentBlock, currentPositionInCode);
 }
 
-bool TryClassNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
+CodeBlock* FindBestCorrespondingBlock(CodeBlock* block, int currentPosition)
+{
+    if (block->closingBracketPosition < currentPosition) {
+        return nullptr;
+    }
+
+    if (block->openingBracketPosition > currentPosition) {
+        return nullptr;
+    }
+
+    CodeBlock *goodChild = block;
+
+    for (int i = 0, iend = block->childrenBlocks.size(); i != iend; ++i) {
+        CodeBlock* child = FindBestCorrespondingBlock(&block->childrenBlocks[i], currentPosition);
+
+        if (child) {
+            goodChild = child;
+
+            break;
+        }
+    }
+
+    return goodChild;
+}
+
+bool TryClassNonterminals(const SyntaxParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (syntaxTreeNode->value.name == "<class-part1>") {
         SymbolClass newSymbol;
@@ -59,7 +84,7 @@ bool TryClassNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
     return false;
 }
 
-bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
+bool TryBlockNonterminals(const SyntaxParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (syntaxTreeNode && syntaxTreeNode->value.name == "<closing-bracket>") {
         if (newSymbolPosition.currentBlock && syntaxTreeNode->value.j == newSymbolPosition.currentBlock->closingBracketPosition) {
@@ -80,10 +105,10 @@ bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
     }
 
     int closingBracketPosition = syntaxTreeNode->value.i + syntaxTreeNode->value.j;
-    SymbolFunction& currentFunction = symbolsTable[newSymbolPosition.className].functions[newSymbolPosition.methodName];
+    SymbolMethod& currentFunction = symbolsTable[newSymbolPosition.className].functions[newSymbolPosition.methodName];
 
     if (newSymbolPosition.currentBlock == nullptr) {
-        VariablesBlock newBlock;
+        CodeBlock newBlock;
         newBlock.parentBlock = nullptr;
 
         currentFunction.blocks.push_back(newBlock);
@@ -93,7 +118,7 @@ bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
             return false;
         }
 
-        VariablesBlock newBlock;
+        CodeBlock newBlock;
         newBlock.parentBlock = newSymbolPosition.currentBlock;
 
         newSymbolPosition.currentBlock->childrenBlocks.push_back(newBlock);
@@ -106,7 +131,7 @@ bool TryBlockNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Le
     return true;
 }
 
-bool TryVariablesNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
+bool TryVariablesNonterminals(const SyntaxParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (!syntaxTreeNode || syntaxTreeNode->value.name != "<local-variable-declaration>") {
         return false;
@@ -144,7 +169,7 @@ bool TryVariablesNonterminals(const ParseTree::Node* syntaxTreeNode, const vecto
         switch (tokens[newVariable.tokenValueStart].type) {
         case Lexem::LEXEM_TOKEN_IDENTIFIER:
             {
-                SymbolVariable* variable = GetVariableByName(tokens[newVariable.tokenValueStart].value, newSymbolPosition.currentBlock, syntaxTreeNode->value.j);
+                SymbolVariable* variable = FindVariable(tokens[newVariable.tokenValueStart].value, newSymbolPosition.currentBlock, syntaxTreeNode->value.j);
 
                 if (!variable) {
                     throw SymbolsTableGenerationError("Error: Variable `" + tokens[newVariable.tokenValueStart].value + "` is not defined before");
@@ -178,55 +203,55 @@ bool TryVariablesNonterminals(const ParseTree::Node* syntaxTreeNode, const vecto
     return true;
 }
 
-bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
+bool TryMethodNonterminals(const SyntaxParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (!syntaxTreeNode || syntaxTreeNode->value.name != "<method-header>") {
         return false;
     }
 
-    ParseTree::Node* methodModifier = syntaxTreeNode->left;
+    SyntaxParseTree::Node* methodModifier = syntaxTreeNode->left;
      
     if (!methodModifier || methodModifier->value.name != "<method-modifier>") {
         return false;
     }
 
-    ParseTree::Node* methodHeaderPart1 = syntaxTreeNode->right;
+    SyntaxParseTree::Node* methodHeaderPart1 = syntaxTreeNode->right;
 
     if (!methodHeaderPart1 || methodHeaderPart1->value.name != "<method-header-part1>") {
         return false;
     }
 
-    ParseTree::Node* methodReturnType = methodHeaderPart1->left;
+    SyntaxParseTree::Node* methodReturnType = methodHeaderPart1->left;
 
     if (!methodReturnType || (methodReturnType->value.name != "<void>" && methodReturnType->value.name != "<type>")) {
         return false;
     }
 
-    ParseTree::Node* methodHeaderPart2 = methodHeaderPart1->right;
+    SyntaxParseTree::Node* methodHeaderPart2 = methodHeaderPart1->right;
 
     if (!methodHeaderPart2 || methodHeaderPart2->value.name != "<method-header-part2>") {
         return false;
     }
 
-    ParseTree::Node* methodName = methodHeaderPart2->left;
+    SyntaxParseTree::Node* methodName = methodHeaderPart2->left;
 
     if (!methodName || methodName->value.name != "<identifier>") {
         return false;
     }
 
-    ParseTree::Node* methodHeaderPart3 = methodHeaderPart2->right;
+    SyntaxParseTree::Node* methodHeaderPart3 = methodHeaderPart2->right;
 
     if (!methodHeaderPart3 || methodHeaderPart3->value.name != "<method-header-part3>") {
         return false;
     }
 
-    ParseTree::Node* openingParentheses = methodHeaderPart3->left;
+    SyntaxParseTree::Node* openingParentheses = methodHeaderPart3->left;
 
     if (!openingParentheses || openingParentheses->value.name != "<opening-parentheses>") {
         return false;
     }
 
-    ParseTree::Node* formalParametersStart = methodHeaderPart3->right;
+    SyntaxParseTree::Node* formalParametersStart = methodHeaderPart3->right;
 
     if (!formalParametersStart || (formalParametersStart->value.name != "<method-header-part4a>"
             && formalParametersStart->value.name != "<method-header-part4b>"
@@ -234,7 +259,7 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
         return false;
     }
 
-    SymbolFunction newFunction;
+    SymbolMethod newFunction;
     newFunction.modifier = tokens[methodModifier->value.j].value;
     newFunction.name = tokens[methodName->value.j].value;
     newFunction.returnType = tokens[methodReturnType->value.j].value;
@@ -248,14 +273,14 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
         throw SymbolsTableGenerationError("Error: Method name `" + newFunction.name + "` is used twice in `" + symbolsTable[newSymbolPosition.className].name + "` class declaration");
     }
 
-    VariablesBlock newBlock;
+    CodeBlock newBlock;
     newBlock.parentBlock = nullptr;
     newBlock.openingBracketPosition = 0;
     newBlock.closingBracketPosition = tokens.size();
     
     if (formalParametersStart->value.i > 1) {
         for (int curLexem = formalParametersStart->value.j, lastLexem = formalParametersStart->value.j + formalParametersStart->value.i; curLexem < lastLexem; curLexem += 3) {
-            FixedParameter parameter;
+            MethodArgument parameter;
             parameter.type = tokens[curLexem].value;
             parameter.name = tokens[curLexem + 1].value;
 
@@ -288,7 +313,7 @@ bool TryMethodNonterminals(const ParseTree::Node* syntaxTreeNode, const vector<L
     return true;
 }
 
-void TraverseThroughSyntaxTreeAndAddSymbols(const ParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
+void TraverseThroughSyntaxTreeAndAddSymbols(const SyntaxParseTree::Node* syntaxTreeNode, const vector<Lexem>& tokens, PositionInSymbolsTable& newSymbolPosition, SymbolsTable& symbolsTable)
 {
     if (!syntaxTreeNode) {
         return;
@@ -314,7 +339,7 @@ void TraverseThroughSyntaxTreeAndAddSymbols(const ParseTree::Node* syntaxTreeNod
     TraverseThroughSyntaxTreeAndAddSymbols(syntaxTreeNode->right, tokens, newSymbolPosition, symbolsTable);
 }
 
-void GenerateSymbolsTable(const ParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable)
+void BuildSymbolsTable(const SyntaxParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable)
 {
     PositionInSymbolsTable firstSymbolPosition;
     firstSymbolPosition.className = "";
@@ -324,7 +349,7 @@ void GenerateSymbolsTable(const ParseTree& syntaxTree, const vector<Lexem>& toke
     TraverseThroughSyntaxTreeAndAddSymbols(syntaxTree.GetRoot(), tokens, firstSymbolPosition, symbolsTable);
 }
 
-void WriteBlocksToXLS(BasicExcelWorksheet* worksheet, int& row, int col, VariablesBlock& block)
+void WriteBlocksToXLS(BasicExcelWorksheet* worksheet, int& row, int col, CodeBlock& block)
 {
     worksheet->Cell(row, col)->Set("Block");
 

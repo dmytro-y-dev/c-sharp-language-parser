@@ -16,7 +16,7 @@
  \author metamaker
  \brief 
  
- Class of table with symbols descriptors from source file.
+ Symbols table type definition and functions to work with information about symbols.
  
 ********************************************************************************************/
 
@@ -35,11 +35,12 @@ using std::string;
 
 typedef map<string, SymbolClass> SymbolsTable;
 
-void GenerateSymbolsTable(const ParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable);
+void BuildSymbolsTable(const SyntaxParseTree& syntaxTree, const vector<Lexem>& tokens, SymbolsTable& symbolsTable);
+
+SymbolVariable* FindVariable(const string& variableName, CodeBlock* bestCorrespondingBlock, int currentPositionInCode);
+CodeBlock* FindBestCorrespondingBlock(CodeBlock* block, int currentPosition);
 
 void WriteSymbolsTableToXLS(const SymbolsTable& symbolsTable, const char* filepath);
-
-SymbolVariable* GetVariableByName(const string& name, VariablesBlock* startingBlock, int currentPositionInCode);
 
 typedef std::string SymbolsTableGenerationError;
 

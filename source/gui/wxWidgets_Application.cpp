@@ -66,7 +66,7 @@ wxFrame(nullptr, wxID_ANY, "C# Syntax Analyzer GUI", wxDefaultPosition, wxSize(7
     new wxButton(mainPanel, ID_BTN_PARSE, "Parse", wxPoint(660, 455), wxSize(100, 25));
 }
 
-void DisplayNodeInWxTreeCtrl(wxTreeCtrl* outTree, const ParseTree::Node* node, wxTreeItemId outNode)
+void DisplayNodeInWxTreeCtrl(wxTreeCtrl* outTree, const SyntaxParseTree::Node* node, wxTreeItemId outNode)
 {
     if (node == nullptr) {
         outTree->Delete(outNode);
@@ -83,7 +83,7 @@ void DisplayNodeInWxTreeCtrl(wxTreeCtrl* outTree, const ParseTree::Node* node, w
     DisplayNodeInWxTreeCtrl(outTree, node->right, rightChild);
 }
 
-void DisplayParseTreeInWxTreeCtrl(wxTreeCtrl* outTree, const ParseTree& tree)
+void DisplayParseTreeInWxTreeCtrl(wxTreeCtrl* outTree, const SyntaxParseTree& tree)
 {
     wxTreeItemId rootItem = outTree->AddRoot("");
 
@@ -128,7 +128,7 @@ void MyMainWindow::OnBtnParse(wxCommandEvent& evt)
         return;
     }
 
-    ParseTree syntaxTree;
+    SyntaxParseTree syntaxTree;
 
     try {
         syntaxTree = DoSyntaxAnalysis(tokens, syntaxRules, syntaxRules[0].GetName());

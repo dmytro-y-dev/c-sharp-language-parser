@@ -1,6 +1,6 @@
 #include "ParseTree.h"
 
-void DisplaySyntaxParseTreeNodeAsText(ostream& out, const ParseTree::Node* node, const string& prefix)
+void DisplaySyntaxParseTreeNodeAsText(ostream& out, const SyntaxParseTree::Node* node, const string& prefix)
 {
     if (node == nullptr) {
         return;
@@ -12,17 +12,17 @@ void DisplaySyntaxParseTreeNodeAsText(ostream& out, const ParseTree::Node* node,
     DisplaySyntaxParseTreeNodeAsText(out, node->right, prefix + "    R!");
 }
 
-void DisplaySyntaxParseTreeAsText(ostream& out, const ParseTree& tree)
+void DisplaySyntaxParseTreeAsText(ostream& out, const SyntaxParseTree& tree)
 {
     DisplaySyntaxParseTreeNodeAsText(out, tree.GetRoot(), "");
 }
 
-ParseTree::ParseTree()
+SyntaxParseTree::SyntaxParseTree()
 {
     m_root = nullptr;
 }
 
-ParseTree::ParseTree(const ParseTree& tree)
+SyntaxParseTree::SyntaxParseTree(const SyntaxParseTree& tree)
 {
     if (tree.m_root) {
         m_root = new Node(NullPosition);
@@ -32,29 +32,29 @@ ParseTree::ParseTree(const ParseTree& tree)
     }
 }
 
-ParseTree::~ParseTree()
+SyntaxParseTree::~SyntaxParseTree()
 {
     FreeNode(m_root);
 
     m_root = nullptr;
 }
 
-bool ParseTree::Empty() const
+bool SyntaxParseTree::Empty() const
 {
     return m_root == nullptr;
 }
 
-const ParseTree::Node* ParseTree::GetRoot() const
+const SyntaxParseTree::Node* SyntaxParseTree::GetRoot() const
 {
     return m_root;
 }
 
-ParseTree::Node* ParseTree::GetRoot()
+SyntaxParseTree::Node* SyntaxParseTree::GetRoot()
 {
     return m_root;
 }
 
-void ParseTree::FreeNode(Node* node)
+void SyntaxParseTree::FreeNode(Node* node)
 {
     if (node == nullptr) {
         return;
@@ -66,7 +66,7 @@ void ParseTree::FreeNode(Node* node)
     delete node;
 }
 
-ParseTree::Node* ParseTree::InsertChildNode(ParseTree::Node* parentNode, const NonTerminalPositionType& value)
+SyntaxParseTree::Node* SyntaxParseTree::InsertChildNode(SyntaxParseTree::Node* parentNode, const NonTerminalPositionType& value)
 {
     if (parentNode == nullptr) {
         if (m_root == nullptr) {
@@ -93,7 +93,7 @@ ParseTree::Node* ParseTree::InsertChildNode(ParseTree::Node* parentNode, const N
     return nullptr;
 }
 
-ParseTree& ParseTree::operator=(const ParseTree& tree)
+SyntaxParseTree& SyntaxParseTree::operator=(const SyntaxParseTree& tree)
 {
     FreeNode(m_root);
 
@@ -107,7 +107,7 @@ ParseTree& ParseTree::operator=(const ParseTree& tree)
     return *this;
 }
 
-void ParseTree::DeepCopyNode(const Node* from, Node* where)
+void SyntaxParseTree::DeepCopyNode(const Node* from, Node* where)
 {
     if (where == nullptr) {
         return;

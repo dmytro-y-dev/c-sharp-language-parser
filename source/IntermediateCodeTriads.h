@@ -16,27 +16,31 @@
  \author metamaker
  \brief 
  
- Functions to load syntax rules base and analyze stack of tokens. 
+ This unit contains functions to generate intermediate code in triads from intermediate parse tree.
  
 ********************************************************************************************/
 
-#ifndef C_SHARP_SYNTAX_ANALYZER_H
-#define C_SHARP_SYNTAX_ANALYZER_H
+#ifndef CSHARP_INTERMEDIATE_CODE_TRIADS_H
+#define CSHARP_INTERMEDIATE_CODE_TRIADS_H
 
-#include "ParseTree.h"
-#include "SyntaxRule.h"
-
-#include <vector>
 #include <string>
+#include <map>
 
-using std::vector;
+#include "SymbolsTable.h"
+#include "IntermediateCodeParseTree.h"
+
 using std::string;
+using std::map;
 
-struct Lexem;
+struct Triad
+{
+    int id;
+    string operation;
+    string first;
+    string second;
+};
 
-bool LoadSyntaxRules(const char *path, vector<SyntaxRule>& rules);
-SyntaxParseTree DoSyntaxAnalysis(const vector<Lexem>& tokens, const vector<SyntaxRule>& rules, const string& startingSymbol);
+SymbolVariable* FindVariable(const string& variableName, int methodId, int currentPosition, SymbolsTable& symbolsTable, map<int, Triad>& triads);
+void BuildTriadsTable(const IntermediateCodeParseTreeNode& intermediateTreeRoot, SymbolsTable& symbolsTable, map<int, Triad>& triadsTable);
 
-typedef std::string SyntaxError;
-
-#endif // C_SHARP_SYNTAX_ANALYZER_H
+#endif //CSHARP_INTERMEDIATE_CODE_TRIADS_H

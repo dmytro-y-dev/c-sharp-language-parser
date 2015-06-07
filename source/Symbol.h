@@ -33,6 +33,45 @@ using std::string;
 using std::vector;
 using std::map;
 
+struct SymbolMethod;
+struct MethodArgument;
+struct SymbolVariable;
+struct CodeBlock;
+
+struct SymbolClass
+{
+    string name;
+
+    map<string, SymbolMethod> functions;
+};
+
+struct SymbolMethod
+{
+    string modifier;
+    string returnType;
+    string name;
+    map<string, MethodArgument> parameters;
+
+    vector<CodeBlock> blocks;
+};
+
+struct MethodArgument
+{
+    string type;
+    string name;
+};
+
+struct CodeBlock
+{
+    map<string, SymbolVariable> variables;
+
+    vector<CodeBlock> childrenBlocks;
+    CodeBlock* parentBlock;
+
+    int openingBracketPosition;
+    int closingBracketPosition;
+};
+
 struct SymbolVariable
 {
     string type;
@@ -46,38 +85,4 @@ struct SymbolVariable
     string value;
 };
 
-struct FixedParameter
-{
-    string type;
-    string name;
-};
-
-struct VariablesBlock
-{
-    map<string, SymbolVariable> variables;
-
-    vector<VariablesBlock> childrenBlocks;
-    VariablesBlock* parentBlock;
-
-    int openingBracketPosition;
-    int closingBracketPosition;
-};
-
-struct SymbolFunction
-{
-    string modifier;
-    string returnType;
-    string name;
-    map<string, FixedParameter> parameters;
-
-    vector<VariablesBlock> blocks;
-};
-
-struct SymbolClass
-{
-    string name;
-
-    map<string, SymbolFunction> functions;
-};
-
-#endif //C_SHARP_SYMBOL
+#endif // C_SHARP_SYMBOL

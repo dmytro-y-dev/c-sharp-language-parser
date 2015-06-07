@@ -60,7 +60,7 @@ bool LoadSyntaxRules(const char *path, vector<SyntaxRule>& rules)
     return true;
 }
 
-void TraceSyntaxAnalyzerPath(map<NonTerminalPositionType, vector<NonTerminalPositionType> >& P, ParseTree& tree, ParseTree::Node* node)
+void TraceSyntaxAnalyzerPath(map<NonTerminalPositionType, vector<NonTerminalPositionType> >& P, SyntaxParseTree& tree, SyntaxParseTree::Node* node)
 {
     if (P[node->value].empty()) {
         return;
@@ -73,8 +73,8 @@ void TraceSyntaxAnalyzerPath(map<NonTerminalPositionType, vector<NonTerminalPosi
     }
 
     if (P[node->value].size() == 2) {
-        ParseTree::Node* leftNode = tree.InsertChildNode(node, P[node->value][0]);
-        ParseTree::Node* rightNode = tree.InsertChildNode(node, P[node->value][1]);
+        SyntaxParseTree::Node* leftNode = tree.InsertChildNode(node, P[node->value][0]);
+        SyntaxParseTree::Node* rightNode = tree.InsertChildNode(node, P[node->value][1]);
 
         TraceSyntaxAnalyzerPath(P, tree, leftNode);
         TraceSyntaxAnalyzerPath(P, tree, rightNode);
@@ -85,7 +85,7 @@ void TraceSyntaxAnalyzerPath(map<NonTerminalPositionType, vector<NonTerminalPosi
     throw SyntaxError("Error: Not a binary tree");
 }
 
-ParseTree DoSyntaxAnalysis(const vector<Lexem>& tokens, const vector<SyntaxRule>& rules, const string& startingSymbol)
+SyntaxParseTree DoSyntaxAnalysis(const vector<Lexem>& tokens, const vector<SyntaxRule>& rules, const string& startingSymbol)
 {
     size_t textSize = tokens.size();
     size_t rulesSize = rules.size();
@@ -164,11 +164,11 @@ ParseTree DoSyntaxAnalysis(const vector<Lexem>& tokens, const vector<SyntaxRule>
     // Trace syntax analyzer path
 
     if (P[NonTerminalPositionType(textSize - 1, 0, startingSymbol)].empty()) {
-        return ParseTree();
+        return SyntaxParseTree();
     }
 
-    ParseTree result;
-    ParseTree::Node* startingNode = result.InsertChildNode(nullptr, NonTerminalPositionType(textSize - 1, 0, startingSymbol));
+    SyntaxParseTree result;
+    SyntaxParseTree::Node* startingNode = result.InsertChildNode(nullptr, NonTerminalPositionType(textSize - 1, 0, startingSymbol));
 
     TraceSyntaxAnalyzerPath(P, result, startingNode);
 
