@@ -3,7 +3,7 @@ C# Language Parser
 
 *Author: metamaker*
 
-This is `C# language parser`. It is planned to improve it by implementation of semantics analysis.
+This is C# language parser. It performs lexical analysis, syntax analysis and intermediate code generation (in a form of intermediate parse tree and triads).
 
 **Lexical analysis:** Tokens reading is implemented by use of regular expressions. Directive "#if" is implemented using grammar (which is quite slow so I will
 change such a way of things in future).
